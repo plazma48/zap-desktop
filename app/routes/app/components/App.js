@@ -59,15 +59,17 @@ class App extends Component {
       activityModalProps,
       channelFormProps,
 
+      settings,
+
       children
     } = this.props
 
     if (!currentTicker) {
-      return <LoadingBolt />
+      return <LoadingBolt theme={settings.theme} />
     }
 
     return (
-      <div>
+      <div className={`${settings.theme}`}>
         <div className={styles.titleBar} />
         <GlobalError error={error} clearError={clearError} />
 

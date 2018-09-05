@@ -34,6 +34,7 @@ const Onboarding = ({
     seed,
     fetchingSeed
   },
+  theme,
   connectionTypeProps,
   connectionDetailProps,
   connectionConfirmProps,
@@ -60,6 +61,7 @@ const Onboarding = ({
               in the background. However you can also setup a custom node connection and
               use Zap to control a remote node if you desire (for advanced users).
             "
+            theme={theme}
             back={null}
             next={() => {
               switch (connectionType) {
@@ -83,6 +85,7 @@ const Onboarding = ({
           <FormContainer
             title="Connection details"
             description="Enter the connection details for your Lightning node."
+            theme={theme}
             back={() => changeStep(0.1)}
             next={() => {
               // dont allow the user to move on if we don't at least have a hostname.
@@ -102,6 +105,7 @@ const Onboarding = ({
           <FormContainer
             title="BTCPay Server"
             description="Enter the connection details for your BTCPay Server node."
+            theme={theme}
             back={() => changeStep(0.1)}
             next={() => {
               // dont allow the user to move on if the connection string is invalid.
@@ -121,6 +125,7 @@ const Onboarding = ({
           <FormContainer
             title="Confirm connection"
             description="Confirm the connection details for your Lightning node."
+            theme={theme}
             back={() => changeStep(previousStep)}
             next={() => {
               startLnd({
@@ -141,6 +146,7 @@ const Onboarding = ({
           <FormContainer
             title="What should we call you?"
             description="Set your nickname to help others connect with you on the Lightning Network"
+            theme={theme}
             back={() => changeStep(0.1)}
             next={() => changeStep(2)}
           >
@@ -152,6 +158,7 @@ const Onboarding = ({
           <FormContainer
             title="Autopilot"
             description="Autopilot is an automatic network manager. Instead of manually adding people to build your network to make payments, enable autopilot to automatically connect you to the Lightning Network using 60% of your balance." // eslint-disable-line max-len
+            theme={theme}
             back={() => changeStep(1)}
             next={() => startLnd({ type: connectionType, alias, autopilot })}
           >
@@ -168,7 +175,13 @@ const Onboarding = ({
         }
         message += '. Please enter your wallet password to unlock it.'
         return (
-          <FormContainer title="Welcome back!" description={`${message}`} back={null} next={null}>
+          <FormContainer
+            title="Welcome back!"
+            description={`${message}`}
+            theme={theme}
+            back={null}
+            next={null}
+          >
             <Login {...initWalletProps.loginProps} />
           </FormContainer>
         )
@@ -177,6 +190,7 @@ const Onboarding = ({
           <FormContainer
             title="Welcome!"
             description="Looks like you are new here. Set a password to encrypt your wallet. This password will be needed to unlock Zap in the future" // eslint-disable-line max-len
+            theme={theme}
             back={null}
             next={() => {
               // dont allow the user to move on if the confirmation password doesnt match the original password
@@ -201,6 +215,7 @@ const Onboarding = ({
           <FormContainer
             title={"Alright, let's get set up"}
             description="Would you like to create a new wallet or import an existing one?"
+            theme={theme}
             back={() => changeStep(4)}
             next={() => {
               // require the user to select create wallet or import wallet
@@ -222,6 +237,7 @@ const Onboarding = ({
           <FormContainer
             title="Import your seed"
             description="Recovering a wallet, nice. You don't need anyone else, you got yourself :)"
+            theme={theme}
             back={() => changeStep(5)}
             next={() => {
               const recoverySeed = recoverFormProps.recoverSeedInput.map(input => input.word)
@@ -237,6 +253,7 @@ const Onboarding = ({
           <FormContainer
             title="Save your wallet seed"
             description="Please save these 24 words securely! This will allow you to recover your wallet in the future"
+            theme={theme}
             back={() => changeStep(5)}
             next={() => changeStep(7)}
           >
@@ -251,6 +268,7 @@ const Onboarding = ({
             To make sure that you have properly saved your seed, please retype words ${
               reEnterSeedProps.seedIndexesArr[0]
             }, ${reEnterSeedProps.seedIndexesArr[1]} and ${reEnterSeedProps.seedIndexesArr[2]}`}
+            theme={theme}
             back={() => changeStep(6)}
             next={() => {
               // don't allow them to move on if they havent re-entered the seed correctly
@@ -265,18 +283,18 @@ const Onboarding = ({
           </FormContainer>
         )
       default:
-        return <LoadingBolt />
+        return <LoadingBolt theme={theme} />
     }
   }
 
   if (startingLnd) {
-    return <LoadingBolt />
+    return <LoadingBolt theme={theme} />
   }
   if (fetchingSeed) {
-    return <LoadingBolt />
+    return <LoadingBolt theme={theme} />
   }
 
-  return <div className={styles.container}>{renderStep()}</div>
+  return <div className={`${styles.container} ${theme}`}>{renderStep()}</div>
 }
 
 Onboarding.propTypes = {

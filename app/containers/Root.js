@@ -65,6 +65,7 @@ const mapStateToProps = state => ({
   onboarding: state.onboarding,
   address: state.address,
   info: state.info,
+  theme: state.settings.theme,
 
   syncPercentage: lndSelectors.syncPercentage(state),
   passwordIsValid: onboardingSelectors.passwordIsValid(state),
@@ -85,7 +86,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     lndCfilterHeight: stateProps.lnd.lndCfilterHeight,
     hasSynced: stateProps.info.hasSynced,
     syncPercentage: stateProps.syncPercentage,
-    address: stateProps.address.address
+    address: stateProps.address.address,
+    theme: stateProps.theme
   }
 
   const connectionTypeProps = {
@@ -176,6 +178,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const onboardingProps = {
     onboarding: stateProps.onboarding,
+    theme: stateProps.theme,
     changeStep: dispatchProps.changeStep,
     startLnd: dispatchProps.startLnd,
     submitNewWallet: dispatchProps.submitNewWallet,
@@ -227,7 +230,7 @@ const Root = ({
 
   // Don't launch the app without a connection to lnd.
   if (!lnd.lightningGrpcActive && !lnd.walletUnlockerGrpcActive) {
-    return <LoadingBolt />
+    return <LoadingBolt theme={onboardingProps.theme} />
   }
 
   return (

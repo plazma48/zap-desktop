@@ -87,11 +87,13 @@ class Activity extends Component {
 
       updateSearchActive,
       updateSearchText,
-      walletProps
+      walletProps,
+
+      settings
     } = this.props
 
     if (balance.channelBalance === null || balance.walletBalance === null) {
-      return <LoadingBolt />
+      return <LoadingBolt theme={settings.theme} />
     }
 
     const refreshClicked = () => {

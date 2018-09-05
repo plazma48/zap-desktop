@@ -9,7 +9,7 @@ const Fiat = ({ fiatTicker, fiatTickers, disableSubMenu, setFiatTicker }) => (
   <div>
     <header className={styles.submenuHeader} onClick={disableSubMenu}>
       <FaAngleLeft />
-      <span>Fiat currency</span>
+      <span>Fiat Currency</span>
     </header>
     <ul className={styles.fiatTickers}>
       {fiatTickers.map(ft => (
@@ -30,7 +30,7 @@ Fiat.propTypes = {
   fiatTicker: PropTypes.string.isRequired,
   fiatTickers: PropTypes.array.isRequired,
   disableSubMenu: PropTypes.func.isRequired,
-  setFiatTicker: PropTypes.func.isRequired
+  setFiatTicker: PropTypes.func
 }
 
 export default Fiat

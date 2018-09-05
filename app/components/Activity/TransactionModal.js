@@ -52,15 +52,17 @@ const TransactionModal = ({
             On-Chain
           </span>
         </div>
-        <div>
-          <Value
-            value={transaction.total_fees}
-            currency={ticker.currency}
-            currentTicker={currentTicker}
-            fiatTicker={ticker.fiatTicker}
-          />
-          <span> {currencyName} fee</span>
-        </div>
+        {!transaction.received && (
+          <div>
+            <Value
+              value={transaction.total_fees}
+              currency={ticker.currency}
+              currentTicker={currentTicker}
+              fiatTicker={ticker.fiatTicker}
+            />
+            <span> {currencyName} fee</span>
+          </div>
+        )}
       </section>
     </header>
 

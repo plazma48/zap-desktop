@@ -4,6 +4,7 @@ import QRCode from 'qrcode.react'
 import copy from 'copy-to-clipboard'
 import Isvg from 'react-inlinesvg'
 import zapLogo from 'icons/zap_logo.svg'
+import zapLogoDark from 'icons/zap_logo_black.svg'
 import copyIcon from 'icons/copy.svg'
 import { showNotification } from 'lib/utils/notifications'
 import styles from './Syncing.scss'
@@ -44,7 +45,8 @@ class Syncing extends Component {
       address,
       blockHeight,
       lndBlockHeight,
-      lndCfilterHeight
+      lndCfilterHeight,
+      theme
     } = this.props
     let { syncMessageDetail, syncMessageExtraDetail } = this.state
 
@@ -68,17 +70,17 @@ class Syncing extends Component {
       }
     }
 
-    if (typeof hasSynced === 'undefined') {
-      return null
-    }
+    // if (typeof hasSynced === 'undefined') {
+    //   return null
+    // }
 
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${theme}`}>
         <div className={styles.titleBar} />
 
         <div className={styles.content}>
           <header>
-            <Isvg className={styles.bitcoinLogo} src={zapLogo} />
+            <Isvg className={styles.bitcoinLogo} src={theme === 'light' ? zapLogoDark : zapLogo} />
           </header>
 
           {hasSynced === true && (
@@ -156,6 +158,7 @@ class Syncing extends Component {
 
 Syncing.propTypes = {
   address: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
   hasSynced: PropTypes.bool,
   syncStatus: PropTypes.string.isRequired,
   syncPercentage: PropTypes.number,

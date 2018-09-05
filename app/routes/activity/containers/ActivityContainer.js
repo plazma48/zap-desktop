@@ -21,7 +21,7 @@ import { payFormSelectors } from 'reducers/payform'
 
 import { setWalletCurrencyFilters } from 'reducers/info'
 
-import { setSettingsOpen, setActiveSubMenu, disableSubMenu } from 'reducers/settings'
+import { setSettingsOpen, setActiveSubMenu, disableSubMenu, setTheme } from 'reducers/settings'
 
 import Activity from '../components/Activity'
 
@@ -47,7 +47,8 @@ const mapDispatchToProps = {
   setWalletCurrencyFilters,
   setSettingsOpen,
   setActiveSubMenu,
-  disableSubMenu
+  disableSubMenu,
+  setTheme
 }
 
 const mapStateToProps = state => ({
@@ -102,6 +103,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     currencyName: stateProps.currencyName,
     network: stateProps.info.network,
     paymentTimeout: stateProps.payment.paymentTimeout,
+    theme: stateProps.settings.theme,
 
     setCurrency: dispatchProps.setCurrency,
     setWalletCurrencyFilters: dispatchProps.setWalletCurrencyFilters,
@@ -129,6 +131,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
         fiatTickers: stateProps.ticker.fiatTickers,
         disableSubMenu: dispatchProps.disableSubMenu,
         setFiatTicker: dispatchProps.setFiatTicker
+      },
+
+      themeProps: {
+        theme: stateProps.settings.theme,
+        setTheme: dispatchProps.setTheme,
+        disableSubMenu: dispatchProps.disableSubMenu
       }
     }
   }
