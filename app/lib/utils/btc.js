@@ -2,12 +2,6 @@
 
 import sb from 'satoshi-bitcoin'
 
-////////////////
-// Helpers /////
-////////////////
-
-const numberWithCommas = x => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-
 //////////////////////
 // BTC to things /////
 /////////////////////
@@ -24,8 +18,9 @@ export function btcToBits(btc) {
 }
 
 export function btcToFiat(btc, price) {
-  const amount = parseFloat(btc * price).toFixed(2)
-  return btc > 0 && amount <= 0 ? '< 0.01' : numberWithCommas(amount)
+  if (btc === undefined || btc === null || btc === '') return null
+
+  return parseFloat(btc * price)
 }
 
 ////////////////////////////
@@ -59,7 +54,10 @@ export function bitsToFiat(bits, price) {
 export function satoshisToBtc(satoshis) {
   if (satoshis === undefined || satoshis === null || satoshis === '') return null
 
-  const btcAmount = sb.toBitcoin(satoshis).toFixed(8)
+  // Make sure we are not passing a non-whole number to sb.toBitcoin(). If the number isn't whole we round up
+  const numSats = satoshis % 1 === 0 ? satoshis : Math.ceil(satoshis)
+
+  const btcAmount = sb.toBitcoin(numSats).toFixed(8)
   return btcAmount > 0 ? btcAmount : btcAmount * -1
 }
 

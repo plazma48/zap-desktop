@@ -1,12 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { FormattedMessage, injectIntl } from 'react-intl'
+import messages from './messages'
 import styles from './Login.scss'
 
-const Login = ({ password, updatePassword, unlockingWallet, unlockWallet, unlockWalletError }) => (
+const Login = ({
+  password,
+  updatePassword,
+  unlockingWallet,
+  unlockWallet,
+  unlockWalletError,
+  intl
+}) => (
   <div className={styles.container}>
     <input
       type="password"
-      placeholder="Password"
+      placeholder={intl.formatMessage({ ...messages.password_placeholder })}
       className={`${styles.password} ${unlockWalletError.isError ? styles.inputError : undefined}`}
       ref={input => input && input.focus()}
       value={password}
@@ -23,11 +32,17 @@ const Login = ({ password, updatePassword, unlockingWallet, unlockWallet, unlock
 
     <section className={styles.buttons}>
       <div>
-        <span
-          className={`${!unlockingWallet ? styles.active : undefined} ${styles.button}`}
-          onClick={() => unlockWallet(password)}
-        >
-          {unlockingWallet ? <i className={styles.spinner} /> : 'Unlock'}
+        <span className={styles.button}>
+          <span
+            className={`${!unlockingWallet ? styles.active : undefined} ${styles.button}`}
+            onClick={() => unlockWallet(password)}
+          >
+            {unlockingWallet ? (
+              <i className={styles.spinner} />
+            ) : (
+              <FormattedMessage {...messages.unlock} />
+            )}
+          </span>
         </span>
       </div>
     </section>
@@ -42,4 +57,4 @@ Login.propTypes = {
   unlockWalletError: PropTypes.object.isRequired
 }
 
-export default Login
+export default injectIntl(Login)

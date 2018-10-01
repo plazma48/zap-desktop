@@ -4,8 +4,11 @@ import QRCode from 'qrcode.react'
 import copy from 'copy-to-clipboard'
 import Isvg from 'react-inlinesvg'
 import zapLogo from 'icons/zap_logo.svg'
+import zapLogoDark from 'icons/zap_logo_black.svg'
 import copyIcon from 'icons/copy.svg'
 import { showNotification } from 'lib/utils/notifications'
+import { FormattedMessage, injectIntl } from 'react-intl'
+import messages from './messages'
 import styles from './Syncing.scss'
 
 class Syncing extends Component {
@@ -16,14 +19,13 @@ class Syncing extends Component {
   }
 
   componentWillMount() {
-    const { syncStatus } = this.props
+    const { syncStatus, intl } = this.props
 
     // If we are still waiting for peers after some time, advise te user it could take a wile.
     let timer = setTimeout(() => {
       if (syncStatus === 'waiting') {
         this.setState({
-          syncMessageDetail:
-            'It looks like this could take some time - you might want to grab a coffee or try again later!'
+          syncMessageDetail: intl.formatMessage({ ...messages.grab_coffee })
         })
       }
     }, 10000)
@@ -44,7 +46,9 @@ class Syncing extends Component {
       address,
       blockHeight,
       lndBlockHeight,
-      lndCfilterHeight
+      lndCfilterHeight,
+      intl,
+      theme
     } = this.props
     let { syncMessageDetail, syncMessageExtraDetail } = this.state
 
@@ -54,17 +58,27 @@ class Syncing extends Component {
     }
     let syncMessage
     if (syncStatus === 'waiting') {
-      syncMessage = 'Waiting for peers...'
+      syncMessage = intl.formatMessage({ ...messages.waiting_for_peers })
     } else if (syncStatus === 'in-progress') {
       if (typeof syncPercentage === 'undefined' || syncPercentage <= 0) {
-        syncMessage = 'Preparing...'
+        syncMessage = intl.formatMessage({ ...messages.preparing })
         syncMessageDetail = null
       } else if (syncPercentage) {
         syncMessage = `${syncPercentage}%`
-        syncMessageDetail = `Block:
-          ${lndBlockHeight.toLocaleString()} of ${blockHeight.toLocaleString()}`
-        syncMessageExtraDetail = `Commitment Filter:
-          ${lndCfilterHeight.toLocaleString()} of ${blockHeight.toLocaleString()}`
+        syncMessageDetail = intl.formatMessage(
+          { ...messages.block_progress },
+          {
+            currentBlock: lndBlockHeight.toLocaleString(),
+            totalBlocks: blockHeight.toLocaleString()
+          }
+        )
+        syncMessageExtraDetail = intl.formatMessage(
+          { ...messages.filter_progress },
+          {
+            currentFilter: lndCfilterHeight.toLocaleString(),
+            totalFilters: blockHeight.toLocaleString()
+          }
+        )
       }
     }
 
@@ -73,33 +87,36 @@ class Syncing extends Component {
     }
 
     return (
-      <div className={styles.container}>
+      <div className={`${styles.container} ${theme}`}>
         <div className={styles.titleBar} />
 
         <div className={styles.content}>
           <header>
-            <Isvg className={styles.bitcoinLogo} src={zapLogo} />
+            <Isvg className={styles.bitcoinLogo} src={theme === 'light' ? zapLogoDark : zapLogo} />
           </header>
 
           {hasSynced === true && (
-            <div>
+            <div className={styles.hasNotSynced}>
               <div className={styles.title}>
-                <h1>Welcome back to your Zap wallet!</h1>
+                <h1>
+                  <FormattedMessage {...messages.sync_title} />
+                </h1>
                 <p>
-                  Please wait a while whilst we fetch all of your latest data from the blockchain.
+                  <FormattedMessage {...messages.sync_description} />
                 </p>
-              </div>
-              <div className={styles.loading}>
-                <div className={styles.spinner} />
               </div>
             </div>
           )}
 
           {hasSynced === false && (
-            <div>
+            <div className={styles.hasSynced}>
               <div className={styles.title}>
-                <h1>Fund your Zap wallet</h1>
-                <p>Might as well fund your wallet while you&apos;re waiting to sync.</p>
+                <h1>
+                  <FormattedMessage {...messages.fund_title} />
+                </h1>
+                <p>
+                  <FormattedMessage {...messages.fund_description} />
+                </p>
               </div>
               {address && address.length ? (
                 <div className={styles.address}>
@@ -130,7 +147,9 @@ class Syncing extends Component {
           )}
 
           <section className={styles.progressContainer}>
-            <h3>Syncing to the blockchain</h3>
+            <h3>
+              <FormattedMessage {...messages.sync_caption} />
+            </h3>
             <div className={styles.progressBar}>
               <div
                 className={styles.progress}
@@ -156,6 +175,7 @@ class Syncing extends Component {
 
 Syncing.propTypes = {
   address: PropTypes.string.isRequired,
+  theme: PropTypes.string.isRequired,
   hasSynced: PropTypes.bool,
   syncStatus: PropTypes.string.isRequired,
   syncPercentage: PropTypes.number,
@@ -164,4 +184,4 @@ Syncing.propTypes = {
   lndCfilterHeight: PropTypes.number
 }
 
-export default Syncing
+export default injectIntl(Syncing)

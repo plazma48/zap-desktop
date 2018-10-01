@@ -1,5 +1,5 @@
-import React from 'react'
-import { Provider, connect } from 'react-redux'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { ConnectedRouter } from 'react-router-redux'
 import { Switch, Route } from 'react-router'
 import PropTypes from 'prop-types'
@@ -29,6 +29,7 @@ import {
   updateRecoverSeedInput,
   setReEnterSeedIndexes
 } from 'reducers/onboarding'
+import { fetchTicker, tickerSelectors } from 'reducers/ticker'
 import { lndSelectors } from 'reducers/lnd'
 import { walletAddress } from 'reducers/address'
 import LoadingBolt from 'components/LoadingBolt'
@@ -60,7 +61,8 @@ const mapDispatchToProps = {
   walletAddress,
   updateReEnterSeedInput,
   updateRecoverSeedInput,
-  setReEnterSeedIndexes
+  setReEnterSeedIndexes,
+  fetchTicker
 }
 
 const mapStateToProps = state => ({
@@ -68,7 +70,9 @@ const mapStateToProps = state => ({
   onboarding: state.onboarding,
   address: state.address,
   info: state.info,
-
+  theme: state.settings.theme,
+  balance: state.balance,
+  currentTicker: tickerSelectors.currentTicker(state),
   syncPercentage: lndSelectors.syncPercentage(state),
   passwordIsValid: onboardingSelectors.passwordIsValid(state),
   passwordMinCharsError: onboardingSelectors.passwordMinCharsError(state),
@@ -88,7 +92,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     lndCfilterHeight: stateProps.lnd.lndCfilterHeight,
     hasSynced: stateProps.info.hasSynced,
     syncPercentage: stateProps.syncPercentage,
-    address: stateProps.address.address
+    address: stateProps.address.address,
+    theme: stateProps.theme
   }
 
   const connectionTypeProps = {
@@ -179,6 +184,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 
   const onboardingProps = {
     onboarding: stateProps.onboarding,
+    theme: stateProps.theme,
     changeStep: dispatchProps.changeStep,
     startLnd: dispatchProps.startLnd,
     submitNewWallet: dispatchProps.submitNewWallet,
@@ -205,49 +211,64 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   }
 }
 
-const Root = ({
-  store,
-  history,
-
-  lnd,
-  onboardingProps,
-  syncingProps
-}) => {
-  // If we are onboarding show the onboarding screen.
-  if (onboardingProps.onboarding.onboarding) {
-    return <Onboarding {...onboardingProps} />
+class Root extends Component {
+  componentWillMount() {
+    const { fetchTicker } = this.props
+    fetchTicker()
   }
 
-  // If we are syncing show the syncing screen.
-  if (
-    onboardingProps.onboarding.onboarded &&
-    lnd.lightningGrpcActive &&
-    onboardingProps.onboarding.connectionType === 'local' &&
-    lnd.syncStatus !== 'complete'
-  ) {
-    return <Syncing {...syncingProps} />
-  }
+  render() {
+    const { balance, currentTicker, history, lnd, onboardingProps, syncingProps } = this.props
 
-  // Don't launch the app without a connection to lnd.
-  if (!lnd.lightningGrpcActive && !lnd.walletUnlockerGrpcActive) {
-    return <LoadingBolt />
-  }
+    if (!onboardingProps.onboarding.onboarded) {
+      return (
+        <div>
+          <LoadingBolt
+            theme={onboardingProps.theme}
+            visible={!onboardingProps.onboarding.onboarding}
+          />
+          <Onboarding {...onboardingProps} />
+          <Syncing {...syncingProps} />
+        </div>
+      )
+    }
 
-  return (
-    <Provider store={store}>
+    // If we are syncing show the syncing screen.
+    if (
+      lnd.lightningGrpcActive &&
+      onboardingProps.onboarding.connectionType === 'local' &&
+      lnd.syncStatus !== 'complete'
+    ) {
+      return <Syncing {...syncingProps} />
+    }
+
+    return (
       <ConnectedRouter history={history}>
-        <App>
-          <Switch>
-            <Route path="/" component={Activity} />
-          </Switch>
-        </App>
+        <div>
+          <LoadingBolt
+            theme={onboardingProps.theme}
+            visible={
+              (!lnd.lightningGrpcActive && !lnd.walletUnlockerGrpcActive) ||
+              !currentTicker ||
+              balance.channelBalance === null ||
+              balance.walletBalance === null
+            }
+          />
+          <App>
+            <Switch>
+              <Route path="/" component={Activity} />
+            </Switch>
+          </App>
+        </div>
       </ConnectedRouter>
-    </Provider>
-  )
+    )
+  }
 }
 
 Root.propTypes = {
-  store: PropTypes.object.isRequired,
+  balance: PropTypes.object.isRequired,
+  fetchTicker: PropTypes.func.isRequired,
+  currentTicker: PropTypes.object,
   history: PropTypes.object.isRequired,
   lnd: PropTypes.object.isRequired,
   onboardingProps: PropTypes.object.isRequired,

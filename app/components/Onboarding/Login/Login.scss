@@ -10,10 +10,9 @@
   border: 1px solid #404040;
   border-radius: 4px;
   padding: 15px;
-  color: $gold;
-  -webkit-text-fill-color: $white;
+  color: var(--lightningOrange);
+  -webkit-text-fill-color: var(--primaryText);
   font-size: 22px;
-  //border-bottom: 1px solid transparent;
   transition: all 0.25s;
 
   &.inputError {
@@ -43,42 +42,28 @@
   text-align: center;
 
   div {
-    color: $white;
+    color: var(--primaryText);
+    text-align: center;
+    margin-bottom: 40px;
 
-    &:nth-child(1) {
-      text-align: center;
-      margin-bottom: 40px;
+    .button {
+      padding: 15px 35px;
+      background: var(--lightningOrange);
+      font-size: 14px;
+      transition: all 0.25s;
+      border-radius: 5px;
 
-      span {
-        padding: 15px 35px;
-        background: $darkspaceblue;
-        font-size: 14px;
-        opacity: 0.5;
-        transition: all 0.25s;
-
-        &.button {
-          position: relative;
-        }
-
-        &.active {
-          opacity: 1;
-          cursor: pointer;
-
-          &:hover {
-            background: lighten($darkspaceblue, 10%);
-          }
-        }
+      &.button {
+        position: relative;
       }
-    }
 
-    &:nth-child(2),
-    &:nth-child(3) {
-      font-size: 12px;
-      cursor: pointer;
-      margin: 10px 0;
+      &.active {
+        opacity: 1;
+        cursor: pointer;
 
-      &:hover {
-        text-decoration: underline;
+        &:hover {
+          opacity: 0.5;
+        }
       }
     }
   }

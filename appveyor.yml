@@ -8,11 +8,9 @@ environment:
     - nodejs_version: LTS
 
 cache:
-  - '%APPDATA%\npm-cache'
-  - "%LOCALAPPDATA%/Yarn"
   - node_modules -> package.json
-  - flow-typed
   - app/node_modules -> app/package.json
+  - flow-typed
 
 matrix:
   fast_finish: true
@@ -25,6 +23,8 @@ shallow_clone: true
 
 clone_depth: 1
 
+skip_branch_with_pr: true
+
 install:
   - ps: Install-Product node $env:nodejs_version
   - set CI=true
@@ -36,4 +36,4 @@ test_script:
   - yarn test-ci
 
 deploy_script:
-  - cmd: powershell if (($env:appveyor_repo_name -eq 'LN-Zap/zap-desktop') -and ($env:appveyor_repo_branch -eq 'master') -and ($env:publish_build)) { yarn release }
+  - cmd: powershell if (($env:appveyor_repo_name -eq 'LN-Zap/zap-desktop') -and ($env:appveyor_repo_branch -eq 'master') -and ($env:publish_build)) { yarn release --win }

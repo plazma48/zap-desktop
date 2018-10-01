@@ -4,7 +4,7 @@ import get from 'lodash.get'
 
 import { btc } from 'lib/utils'
 
-import { fetchTicker, setCurrency, tickerSelectors } from 'reducers/ticker'
+import { setCurrency, tickerSelectors } from 'reducers/ticker'
 
 import { closeWalletModal } from 'reducers/address'
 
@@ -45,7 +45,6 @@ import {
   toggleFilterPulldown,
   changeFilter,
   updateChannelSearchQuery,
-  closeContactModal,
   setSelectedChannel
 } from 'reducers/channels'
 
@@ -81,7 +80,6 @@ import {
 import App from 'components/App'
 
 const mapDispatchToProps = {
-  fetchTicker,
   setCurrency,
 
   closeWalletModal,
@@ -115,7 +113,6 @@ const mapDispatchToProps = {
   toggleFilterPulldown,
   changeFilter,
   updateChannelSearchQuery,
-  closeContactModal,
   setSelectedChannel,
 
   openContactsForm,
@@ -163,6 +160,8 @@ const mapStateToProps = state => ({
   error: state.error,
 
   network: state.network,
+
+  settings: state.settings,
 
   activityModalItem: activitySelectors.activityModalItem(state),
 
@@ -361,16 +360,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     pendingOpenChannelPubkeys: stateProps.pendingOpenChannelPubkeys
   }
 
-  const contactModalProps = {
-    closeContactModal: dispatchProps.closeContactModal,
-    closeChannel: dispatchProps.closeChannel,
-
-    isOpen: stateProps.channels.contactModal.isOpen,
-    channel: stateProps.channels.contactModal.channel,
-    channelNodes: stateProps.channelNodes,
-    closingChannelIds: stateProps.channels.closingChannelIds
-  }
-
   const activityModalProps = {
     itemType: stateProps.activity.modal.itemType,
     itemId: stateProps.activity.modal.itemId,
@@ -478,8 +467,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
     networkTabProps,
     // props for the contacts form
     contactsFormProps,
-    // props for the contact modal
-    contactModalProps,
     // props for the receive modal
     receiveModalProps,
     // props for the activity modals

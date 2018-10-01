@@ -45,6 +45,10 @@ script:
   - yarn test-ci || travis_terminate 1
   - yarn coveralls || travis_terminate 1
 
+branches:
+  only:
+    - master
+
 jobs:
   include:
     - stage: deploy
@@ -53,7 +57,7 @@ jobs:
       deploy:
         skip_cleanup: true
         provider: script
-        script: yarn release
+        script: yarn release --linux
         on:
           repo: LN-Zap/zap-desktop
           branch: master
@@ -64,7 +68,7 @@ jobs:
       deploy:
         skip_cleanup: true
         provider: script
-        script: yarn release
+        script: yarn release --mac
         on:
           repo: LN-Zap/zap-desktop
           branch: master

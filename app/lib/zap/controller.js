@@ -74,7 +74,7 @@ class ZapController {
     this.mainWindow = mainWindow
 
     // Time for the splash screen to remain visible.
-    this.splashScreenTime = 500
+    this.splashScreenTime = 1500
 
     // Initialize the state machine.
     this._fsm()
@@ -111,6 +111,12 @@ class ZapController {
         e.preventDefault()
         this.mainWindow.hide()
       }
+    })
+
+    // Dereference the window object, usually you would store windows in an array if your app supports multi windows,
+    // this is the time when you should delete the corresponding element.
+    this.mainWindow.on('closed', () => {
+      this.mainWindow = null
     })
   }
 
@@ -347,7 +353,7 @@ class ZapController {
       this.sendMessage('lndCfilterHeight', Number(height))
     })
 
-    this.neutrino.start()
+    return this.neutrino.start()
   }
 
   /**

@@ -1,6 +1,8 @@
 import { connect } from 'react-redux'
+import { setLocale } from 'reducers/locale'
 import { setCurrency, setFiatTicker, tickerSelectors } from 'reducers/ticker'
 import { fetchBalance } from 'reducers/balance'
+import { fetchChannels } from 'reducers/channels'
 import { fetchInvoices, setInvoice, invoiceSelectors } from 'reducers/invoice'
 import { setPayment, fetchPayments, paymentSelectors } from 'reducers/payment'
 import { fetchTransactions } from 'reducers/transaction'
@@ -21,11 +23,12 @@ import { payFormSelectors } from 'reducers/payform'
 
 import { setWalletCurrencyFilters } from 'reducers/info'
 
-import { setSettingsOpen, setActiveSubMenu, disableSubMenu } from 'reducers/settings'
+import { setSettingsOpen, setActiveSubMenu, disableSubMenu, setTheme } from 'reducers/settings'
 
 import Activity from 'components/Activity'
 
 const mapDispatchToProps = {
+  setLocale,
   setCurrency,
   setFiatTicker,
   setPayment,
@@ -41,13 +44,15 @@ const mapDispatchToProps = {
   walletAddress,
   openWalletModal,
   fetchBalance,
+  fetchChannels,
   updateSearchActive,
   updateSearchText,
   setFormType,
   setWalletCurrencyFilters,
   setSettingsOpen,
   setActiveSubMenu,
-  disableSubMenu
+  disableSubMenu,
+  setTheme
 }
 
 const mapStateToProps = state => ({
@@ -68,6 +73,9 @@ const mapStateToProps = state => ({
   network: state.network,
 
   settings: state.settings,
+
+  currentLocale: state.intl.locale,
+  locales: state.locale,
 
   paymentModalOpen: paymentSelectors.paymentModalOpen(state),
   invoiceModalOpen: invoiceSelectors.invoiceModalOpen(state),
@@ -102,6 +110,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     currencyName: stateProps.currencyName,
     network: stateProps.info.network,
     paymentTimeout: stateProps.payment.paymentTimeout,
+    theme: stateProps.settings.theme,
 
     setCurrency: dispatchProps.setCurrency,
     setWalletCurrencyFilters: dispatchProps.setWalletCurrencyFilters,
@@ -129,6 +138,19 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
         fiatTickers: stateProps.ticker.fiatTickers,
         disableSubMenu: dispatchProps.disableSubMenu,
         setFiatTicker: dispatchProps.setFiatTicker
+      },
+
+      localeProps: {
+        locales: stateProps.locales,
+        currentLocale: stateProps.currentLocale,
+        disableSubMenu: dispatchProps.disableSubMenu,
+        setLocale: dispatchProps.setLocale
+      },
+
+      themeProps: {
+        theme: stateProps.settings.theme,
+        setTheme: dispatchProps.setTheme,
+        disableSubMenu: dispatchProps.disableSubMenu
       }
     }
   }

@@ -4,6 +4,9 @@ import Isvg from 'react-inlinesvg'
 
 import x from 'icons/x.svg'
 
+import { FormattedMessage } from 'react-intl'
+import messages from './messages'
+
 import styles from './AddChannel.scss'
 
 const AddChannel = ({
@@ -35,7 +38,9 @@ const AddChannel = ({
     if (activeChannelPubkeys.includes(node.pub_key)) {
       return (
         <span className={`${styles.online} ${styles.inactive}`}>
-          <span>Online</span>
+          <span>
+            <FormattedMessage {...messages.online} />
+          </span>
         </span>
       )
     }
@@ -43,7 +48,9 @@ const AddChannel = ({
     if (nonActiveChannelPubkeys.includes(node.pub_key)) {
       return (
         <span className={`${styles.offline} ${styles.inactive}`}>
-          <span>Offline</span>
+          <span>
+            <FormattedMessage {...messages.offline} />
+          </span>
         </span>
       )
     }
@@ -51,13 +58,19 @@ const AddChannel = ({
     if (pendingOpenChannelPubkeys.includes(node.pub_key)) {
       return (
         <span className={`${styles.pending} ${styles.inactive}`}>
-          <span>Pending</span>
+          <span>
+            <FormattedMessage {...messages.pending} />
+          </span>
         </span>
       )
     }
 
     if (!node.addresses.length) {
-      return <span className={`${styles.private} ${styles.inactive}`}>Private</span>
+      return (
+        <span className={`${styles.private} ${styles.inactive}`}>
+          <FormattedMessage {...messages.private} />
+        </span>
+      )
     }
 
     return (
@@ -99,39 +112,41 @@ const AddChannel = ({
         </span>
       </header>
 
-      <section className={styles.nodes}>
-        <ul className={styles.networkResults}>
-          {filteredNetworkNodes.map(node => (
-            <li key={node.pub_key}>
-              <section>
-                {node.alias.length > 0 ? (
-                  <h2>
-                    <span>{node.alias.trim()}</span>
-                    <span>
-                      ({node.pub_key.substr(0, 10)}
-                      ...
-                      {node.pub_key.substr(node.pub_key.length - 10)})
-                    </span>
-                  </h2>
-                ) : (
-                  <h2>
-                    <span>{node.pub_key}</span>
-                  </h2>
-                )}
-              </section>
-              <section>{renderRightSide(node)}</section>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {filteredNetworkNodes.length > 0 && (
+        <section className={styles.nodes}>
+          <ul className={styles.networkResults}>
+            {filteredNetworkNodes.map(node => (
+              <li key={node.pub_key}>
+                <section>
+                  {node.alias.length > 0 ? (
+                    <h2>
+                      <span>{node.alias.trim()}</span>
+                      <span>
+                        ({node.pub_key.substr(0, 10)}
+                        ...
+                        {node.pub_key.substr(node.pub_key.length - 10)})
+                      </span>
+                    </h2>
+                  ) : (
+                    <h2>
+                      <span>{node.pub_key}</span>
+                    </h2>
+                  )}
+                </section>
+                <section>{renderRightSide(node)}</section>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {showManualForm && (
         <section className={styles.manualForm}>
           <p>
-            Hm, looks like we can&apos;t see that node from here, wanna try to manually connect?
+            <FormattedMessage {...messages.manual_description} />
           </p>
           <div className={styles.manualConnectButton} onClick={openManualForm}>
-            Connect Manually
+            <FormattedMessage {...messages.manual_button} />
           </div>
         </section>
       )}
